@@ -14,7 +14,7 @@ const formElements = [
 
 export const Sidebar: React.FC = () => {
   return (
-    <div className="w-64 p-5 bg-gray-50 shadow-lg rounded-l-xl border border-gray-200">
+    <div className="w-64 p-5 bg-gray-50 shadow-lg border border-gray-200">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
         Form Elements
       </h2>

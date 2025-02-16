@@ -23,6 +23,7 @@ interface DragItem {
 
 const FormBuilder: React.FC = () => {
   const [formFields, setFormFields] = useState<FormField[]>([]);
+  const [selectedField, setSelectedField] = useState<FormField | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentField, setCurrentField] = useState<{ type: string } | null>(
     null
@@ -38,28 +39,43 @@ const FormBuilder: React.FC = () => {
 
   const handleSaveField = (label: string, options?: string[]) => {
     if (currentField) {
-      setFormFields((prevFields) => [
-        ...prevFields,
-        {
-          id: uuidv4(),
-          type: currentField.type,
-          label,
-          position: prevFields.length,
-          options,
-        },
-      ]);
+      const newField: FormField = {
+        id: uuidv4(),
+        type: currentField.type,
+        label,
+        position: formFields.length,
+        options,
+      };
+      setFormFields((prevFields) => [...prevFields, newField]);
+      setSelectedField(newField); // Auto-select newly added field
       setCurrentField(null);
     }
     setIsModalOpen(false);
+  };
+
+  const handleSelectField = (field: FormField) => {
+    setSelectedField(field);
+  };
+
+  const handleUpdateField = (updatedField: FormField) => {
+    setFormFields((prevFields) =>
+      prevFields.map((field) =>
+        field.id === updatedField.id ? updatedField : field
+      )
+    );
+    setSelectedField(updatedField);
   };
 
   return (
     <div className="flex h-screen">
       <Sidebar />
       <div ref={drop} className="flex-1 p-4 bg-gray-100">
-        <FormCanvas formFields={formFields} />
+        <FormCanvas formFields={formFields} onSelectField={handleSelectField} />
       </div>
-      <PropertiesPanel />
+      <PropertiesPanel
+        selectedField={selectedField}
+        onUpdateField={handleUpdateField}
+      />
 
       {/* Field Configuration Modal */}
       <FieldConfigModal

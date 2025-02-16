@@ -26,9 +26,13 @@ interface FormField {
 
 interface FormCanvasProps {
   formFields: FormField[];
+  onSelectField: (field: FormField) => void;
 }
 
-export const FormCanvas: React.FC<FormCanvasProps> = ({ formFields }) => {
+export const FormCanvas: React.FC<FormCanvasProps> = ({
+  formFields,
+  onSelectField,
+}) => {
   console.log("Form Fields:", formFields);
 
   const [loading, setLoading] = useState(false);
@@ -106,7 +110,10 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({ formFields }) => {
         <div className="space-y-6">
           {formFields.map((field) => (
             <div key={field.id} className="flex flex-col space-y-2">
-              <Label className="text-lg font-medium">
+              <Label
+                className="text-lg font-medium"
+                onClick={() => onSelectField(field)}
+              >
                 {field.label || "Unnamed Field"}
               </Label>
 
