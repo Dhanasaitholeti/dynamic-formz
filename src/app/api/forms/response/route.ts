@@ -57,6 +57,39 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const fieldMap = new Map(
+      form.fields.map((field) => [field.id, field.label])
+    );
+
+    const payload = {
+      formId: body.formId,
+      formName: form.title,
+      values: body.values.map((value: any) => ({
+        label: fieldMap.get(value.fieldId) || "Unknown Field",
+        value: value.value.toString(),
+      })),
+      submissionTime: response.createdAt,
+    };
+
+    const username = "airbaseinc-S3FWPG.IE904E";
+    const password = "759021a4-3ed6-4e51-83e4-acb35a31090f";
+    const basicAuth = btoa(`${username}:${password}`);
+
+    const webhookCall = await fetch(
+      "https://c02-usa-west.integrate-test.boomi.com/ws/simple/executeDetailstestapi",
+      {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({ payload }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${basicAuth}`,
+        },
+      }
+    );
+
+    console.log("webhookCall", webhookCall);
+
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
     console.error("Error submitting form:", error);
