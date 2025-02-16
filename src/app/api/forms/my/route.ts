@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 
@@ -17,9 +17,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return Response.json({ forms: forms });
+    return NextResponse.json({ forms: forms });
   } catch (error) {
     console.log(error);
-    return Response.json({ message: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
