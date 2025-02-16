@@ -49,6 +49,7 @@ const FormBuilder: React.FC = () => {
       ]);
       setCurrentField(null);
     }
+    setIsModalOpen(false);
   };
 
   return (
@@ -58,6 +59,7 @@ const FormBuilder: React.FC = () => {
         <FormCanvas formFields={formFields} />
       </div>
 
+      {/* Field Configuration Modal */}
       <FieldConfigModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

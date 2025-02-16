@@ -14,82 +14,93 @@ interface FormCanvasProps {
 }
 
 export const FormCanvas: React.FC<FormCanvasProps> = ({ formFields }) => {
+  console.log("formFields", formFields);
+
   return (
     <div className="bg-white p-4 border border-gray-300 rounded-md">
       <h2 className="text-lg font-semibold mb-4">Form Preview</h2>
 
-      {formFields.map((field) => (
-        <div key={field.id} className="mb-4">
-          {/* Label */}
-          <label className="block mb-1 font-semibold">{field.label}</label>
+      {formFields.length === 0 ? (
+        <p className="text-gray-500">Drag and drop a field to start</p>
+      ) : (
+        formFields.map((field) => (
+          <div key={field.id} className="mb-4">
+            {/* Label */}
+            <label className="block mb-2 font-semibold">
+              {typeof field.label === "string" ? field.label : "Unnamed Field"}
+            </label>
 
-          {/* Input Types */}
-          {field.type === "text" && (
-            <input
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          )}
-          {field.type === "number" && (
-            <input
-              type="number"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          )}
-          {field.type === "email" && (
-            <input
-              type="email"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          )}
-          {field.type === "password" && (
-            <input
-              type="password"
-              className="w-full p-2 border border-gray-300 rounded-md"
-            />
-          )}
-          {field.type === "textarea" && (
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded-md"
-              rows={4}
-            />
-          )}
+            {/* Input Fields Based on Type */}
+            {field.type === "TEXT" && (
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter text..."
+              />
+            )}
+            {field.type === "NUMBER" && (
+              <input
+                type="number"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter number..."
+              />
+            )}
+            {field.type === "EMAIL" && (
+              <input
+                type="email"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter email..."
+              />
+            )}
+            {field.type === "password" && (
+              <input
+                type="password"
+                className="w-full p-2 border border-gray-300 rounded-md"
+                placeholder="Enter password..."
+              />
+            )}
+            {field.type === "TEXTAREA" && (
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded-md"
+                rows={4}
+                placeholder="Enter text..."
+              />
+            )}
 
-          {/* Select Dropdown */}
-          {field.type === "select" && (
-            <select className="w-full p-2 border border-gray-300 rounded-md">
-              {field.options?.map((option, index) => (
-                <option key={index} value={option}>
+            {field.type === "DROPDOWN" && (
+              <select className="w-full p-2 border border-gray-300 rounded-md">
+                {field.options?.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {field.type === "RADIO" &&
+              field.options?.map((option, index) => (
+                <label key={index} className="block">
+                  <input
+                    type="radio"
+                    name={field.id}
+                    value={option}
+                    className="mr-2"
+                  />
                   {option}
-                </option>
+                </label>
               ))}
-            </select>
-          )}
 
-          {/* Radio Buttons */}
-          {field.type === "radio" &&
-            field.options?.map((option, index) => (
-              <label key={index} className="block">
-                <input
-                  type="radio"
-                  name={field.id}
-                  value={option}
-                  className="mr-2"
-                />
-                {option}
-              </label>
-            ))}
-
-          {/* Checkboxes */}
-          {field.type === "checkbox" &&
-            field.options?.map((option, index) => (
-              <label key={index} className="block">
-                <input type="checkbox" value={option} className="mr-2" />
-                {option}
-              </label>
-            ))}
-        </div>
-      ))}
+            {/* Checkboxes */}
+            {field.type === "CHECKBOX" &&
+              field.options?.map((option, index) => (
+                <label key={index} className="block">
+                  <input type="checkbox" value={option} className="mr-2" />
+                  {option}
+                </label>
+              ))}
+          </div>
+        ))
+      )}
     </div>
   );
 };

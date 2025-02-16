@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface FieldConfigModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (label: string, options?: string[]) => void;
+  onSave: (config: { label: string; type: string; options?: string[] }) => void;
   fieldType: string;
 }
 
@@ -18,6 +18,13 @@ const FieldConfigModal: React.FC<FieldConfigModalProps> = ({
   const [label, setLabel] = useState("");
   const [options, setOptions] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      setLabel("");
+      setOptions([]);
+    }
+  }, [isOpen]);
+
   const handleAddOption = () => {
     setOptions([...options, ""]);
   };
@@ -29,12 +36,27 @@ const FieldConfigModal: React.FC<FieldConfigModalProps> = ({
   };
 
   const handleSave = () => {
+    if (!label.trim()) {
+      alert("Label is required");
+      return;
+    }
+
+    if (
+      (fieldType === "SELECT" ||
+        fieldType === "RADIO" ||
+        fieldType === "CHECKBOX") &&
+      options.length === 0
+    ) {
+      alert("Options are required for this field type");
+      return;
+    }
+
     onSave(
-      label,
-      fieldType === "select" ||
-        fieldType === "radio" ||
-        fieldType === "checkbox"
-        ? options
+      label.trim(),
+      fieldType === "DROPDOWN" ||
+        fieldType === "RADIO" ||
+        fieldType === "CHECKBOX"
+        ? options.filter((opt: string) => opt.trim() !== "")
         : undefined
     );
     onClose();
@@ -56,12 +78,13 @@ const FieldConfigModal: React.FC<FieldConfigModalProps> = ({
           value={label}
           onChange={(e) => setLabel(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-md"
+          required
         />
 
         {/* Options Input (Only for select, radio, checkbox) */}
-        {(fieldType === "select" ||
-          fieldType === "radio" ||
-          fieldType === "checkbox") && (
+        {(fieldType === "DROPDOWN" ||
+          fieldType === "RADIO" ||
+          fieldType === "CHECKBOX") && (
           <div className="mt-4">
             <label className="block mb-2">Options:</label>
             {options.map((option, index) => (
@@ -71,11 +94,12 @@ const FieldConfigModal: React.FC<FieldConfigModalProps> = ({
                 value={option}
                 onChange={(e) => handleOptionChange(index, e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md mb-2"
+                required
               />
             ))}
             <button
               onClick={handleAddOption}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
             >
               + Add Option
             </button>
