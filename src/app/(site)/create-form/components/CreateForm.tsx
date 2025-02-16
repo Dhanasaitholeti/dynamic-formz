@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Sidebar } from "./Sidebar";
 import { FormCanvas } from "./FormCanvas";
 import FieldConfigModal from "./FieldConfigModal";
+import PropertiesPanel from "./PropertiesPane";
 
 interface FormField {
   id: string;
@@ -58,6 +59,7 @@ const FormBuilder: React.FC = () => {
       <div ref={drop} className="flex-1 p-4 bg-gray-100">
         <FormCanvas formFields={formFields} />
       </div>
+      <PropertiesPanel />
 
       {/* Field Configuration Modal */}
       <FieldConfigModal

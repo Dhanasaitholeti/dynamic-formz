@@ -25,7 +25,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="absolute inset-0 top-[calc(100%-80rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-60rem)]">
+        <div className="absolute  inset-0 top-[calc(100%-0rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
           <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-blue-200 to-blue-400 opacity-20 sm:w-[72.1875rem]" />
         </div>
       </div>

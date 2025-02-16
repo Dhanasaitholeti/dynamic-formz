@@ -14,8 +14,8 @@ const formElements = [
 
 export const Sidebar: React.FC = () => {
   return (
-    <div className="w-64 p-4 bg-gray-100 shadow-lg rounded-lg">
-      <h2 className="text-lg font-semibold mb-4 text-gray-700">
+    <div className="w-64 p-5 bg-gray-50 shadow-lg rounded-l-xl border border-gray-200">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
         Form Elements
       </h2>
       <div className="space-y-3">
@@ -46,9 +46,9 @@ const DraggableElement: React.FC<{ type: string; label: string }> = ({
   return (
     <div
       ref={drag}
-      className={`p-3 bg-white rounded-md shadow-sm text-gray-700 text-sm font-medium cursor-pointer transition-all duration-200 ${
-        isDragging ? "opacity-50" : "hover:bg-gray-200 hover:shadow-md"
-      }`}
+      className={`p-3 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-800 text-sm font-medium cursor-pointer transition-all duration-200
+        ${isDragging ? "opacity-50" : "hover:bg-gray-100 hover:shadow-md"}
+      `}
     >
       {label}
     </div>
