@@ -14,6 +14,9 @@ export default function Navbar() {
       </h1>
 
       <div className="hidden md:flex space-x-6">
+        <Link href="/my-forms" className="text-gray-700 hover:text-blue-600">
+          My Forms
+        </Link>
         <Link href="/create-form" className="text-gray-700 hover:text-blue-600">
           Create Form
         </Link>

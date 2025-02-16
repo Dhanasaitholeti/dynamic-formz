@@ -14,6 +14,7 @@ export async function GET(
       },
       include: {
         fields: true,
+        responses: true,
       },
     });
 

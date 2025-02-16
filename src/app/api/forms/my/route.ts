@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         fields: true,
+        responses: true,
       },
     });
 

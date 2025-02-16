@@ -66,6 +66,24 @@ export default function Page() {
         body: JSON.stringify(payload),
       });
 
+      const username = "airbaseinc-S3FWPG.IE904E";
+      const password = "759021a4-3ed6-4e51-83e4-acb35a31090f";
+      const basicAuth = btoa(`${username}:${password}`);
+
+      const webhookCall = await fetch(
+        "https://c02-usa-west.integrate-test.boomi.com/ws/simple/executeDetailstestapi",
+        {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${basicAuth}`,
+          },
+        }
+      );
+
+      console.log("webhookCall", webhookCall);
+
       if (response.ok) {
         toast({
           title: "Success",
