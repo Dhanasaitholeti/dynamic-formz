@@ -1,56 +1,49 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-
-const formData = {
-  data: {
-    id: "907f1df0-c512-4542-9a6d-762601572b6b",
-    title: "Customer Feedback Form",
-    description: "A form to collect feedback from customers",
-    isPublished: true,
-    fields: [
-      {
-        id: "17a084fe-03b1-4a6b-8141-dbfdba32ac6c",
-        label: "Full Name",
-        fieldType: "TEXT",
-        options: null,
-        isRequired: true,
-      },
-      {
-        id: "126aaa63-eded-45f2-9266-bfe9f0156d9c",
-        label: "Email",
-        fieldType: "EMAIL",
-        options: null,
-        isRequired: true,
-      },
-      {
-        id: "06eacc32-dce8-41ed-9cb7-43a0cdd88b32",
-        label: "How satisfied are you?",
-        fieldType: "RADIO",
-        options: [
-          "Very Satisfied",
-          "Satisfied",
-          "Neutral",
-          "Dissatisfied",
-          "Very Dissatisfied",
-        ],
-        isRequired: true,
-      },
-    ],
-  },
-};
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Page() {
-  const { id: formId, title, description, isPublished, fields } = formData.data;
+  const { formId } = useParams();
+  const [formData, setFormData] = useState(null);
   const [formValues, setFormValues] = useState({});
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchForm = async () => {
+      try {
+        const response = await fetch(`/api/forms/${formId}`);
+        if (!response.ok) throw new Error("Failed to fetch form data");
+        const data = await response.json();
+        setFormData(data.data);
+      } catch (error) {
+        console.error("Error fetching form:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load form data.",
+        });
+      }
+    };
+    if (formId) fetchForm();
+  }, [formId, toast]);
 
   const handleChange = (fieldId, value) => {
     setFormValues((prev) => ({ ...prev, [fieldId]: value }));
@@ -79,23 +72,22 @@ export default function Page() {
           description: "Form submitted successfully!",
         });
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to submit form.",
-        });
+        throw new Error("Failed to submit form.");
       }
     } catch (error) {
-      console.error("Error saving form:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong!",
+        description: error.message,
       });
     } finally {
       setLoading(false);
     }
   };
+
+  if (!formData) {
+    return <p className="text-center text-gray-500">Loading form...</p>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 w-full">
@@ -103,47 +95,125 @@ export default function Page() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center justify-between text-xl">
-              {title}
-              <Badge variant={isPublished ? "default" : "secondary"}>
-                {isPublished ? "Published" : "Draft"}
+              {formData.title}
+              <Badge variant={formData.isPublished ? "default" : "secondary"}>
+                {formData.isPublished ? "Published" : "Draft"}
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">{description}</p>
+            <p className="text-gray-600 mb-4">{formData.description}</p>
             <div className="space-y-4">
-              {fields.map((field) => (
-                <div key={field.id} className="space-y-2">
-                  <Label className="text-lg">
-                    {field.label}{" "}
-                    {field.isRequired && (
-                      <span className="text-red-500">*</span>
-                    )}
-                  </Label>
-                  {field.fieldType === "TEXT" || field.fieldType === "EMAIL" ? (
-                    <Input
-                      type={field.fieldType.toLowerCase()}
-                      placeholder={`Enter ${field.label}`}
-                      value={formValues[field.id] || ""}
-                      onChange={(e) => handleChange(field.id, e.target.value)}
-                    />
-                  ) : field.fieldType === "RADIO" ? (
-                    <RadioGroup
-                      onValueChange={(value) => handleChange(field.id, value)}
-                    >
-                      {field.options.map((option) => (
-                        <div
-                          key={option}
-                          className="flex items-center space-x-2"
-                        >
-                          <RadioGroupItem value={option} id={option} />
-                          <Label htmlFor={option}>{option}</Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  ) : null}
-                </div>
-              ))}
+              {formData.fields.map((field) => {
+                let fieldComponent = null;
+                switch (field.fieldType) {
+                  case "TEXT":
+                  case "EMAIL":
+                    fieldComponent = (
+                      <Input
+                        type={field.fieldType.toLowerCase()}
+                        placeholder={`Enter ${field.label}`}
+                        value={formValues[field.id] || ""}
+                        onChange={(e) => handleChange(field.id, e.target.value)}
+                      />
+                    );
+                    break;
+
+                  case "TEXTAREA":
+                    fieldComponent = (
+                      <Textarea
+                        placeholder={`Enter ${field.label}`}
+                        value={formValues[field.id] || ""}
+                        onChange={(e) => handleChange(field.id, e.target.value)}
+                      />
+                    );
+                    break;
+
+                  case "RADIO":
+                    fieldComponent = (
+                      <RadioGroup
+                        value={formValues[field.id] || ""}
+                        onValueChange={(value) => handleChange(field.id, value)}
+                      >
+                        {field.options.map((option) => (
+                          <div
+                            key={option}
+                            className="flex items-center space-x-2"
+                          >
+                            <RadioGroupItem value={option} id={option} />
+                            <Label htmlFor={option}>{option}</Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    );
+                    break;
+
+                  case "CHECKBOX":
+                    fieldComponent = (
+                      <div className="flex flex-col space-y-2">
+                        {field.options.map((option) => (
+                          <div
+                            key={option}
+                            className="flex items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={option}
+                              checked={
+                                formValues[field.id]?.includes(option) || false
+                              }
+                              onCheckedChange={(checked) => {
+                                setFormValues((prev) => ({
+                                  ...prev,
+                                  [field.id]: checked
+                                    ? [...(prev[field.id] || []), option]
+                                    : prev[field.id]?.filter(
+                                        (val) => val !== option
+                                      ) || [],
+                                }));
+                              }}
+                            />
+                            <Label htmlFor={option}>{option}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                    break;
+
+                  case "DROPDOWN":
+                    fieldComponent = (
+                      <Select
+                        value={formValues[field.id] || ""}
+                        onValueChange={(value) => handleChange(field.id, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options?.map((option, index) => (
+                            <SelectItem key={index} value={option}>
+                              {option}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    );
+                    break;
+
+                  default:
+                    fieldComponent = null;
+                }
+                return (
+                  <div key={field.id} className="space-y-2">
+                    <Label className="text-lg">
+                      {field.label}{" "}
+                      {field.isRequired && (
+                        <span className="text-red-500">*</span>
+                      )}
+                    </Label>
+                    {fieldComponent}
+                  </div>
+                );
+              })}
             </div>
             <Button
               className="mt-6 w-full"
