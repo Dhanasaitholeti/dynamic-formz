@@ -2,6 +2,10 @@
   "name": "form-builder",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Dhanasai Tholeti",
+    "email": "dev.dhanasai@gmail.com"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

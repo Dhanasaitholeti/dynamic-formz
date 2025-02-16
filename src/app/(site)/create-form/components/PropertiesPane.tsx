@@ -1,6 +1,13 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+interface FormField {
+  id: string;
+  label: string;
+  type: string;
+  options?: string[];
+}
+
 interface PropertiesPanelProps {
   selectedField: FormField | null;
   onUpdateField: (updatedField: FormField) => void;
@@ -17,7 +24,7 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
       </div>
     );
 
-  const handleChange = (key: keyof FormField, value: string) => {
+  const handleChange = (key: keyof FormField, value: any) => {
     onUpdateField({ ...selectedField, [key]: value });
   };
 
@@ -33,13 +40,54 @@ const PropertiesPanel: React.FC<PropertiesPanelProps> = ({
         />
       </div>
 
-      {selectedField.type === "text" && (
+      {selectedField.type === "TEXT" && (
         <div className="mt-2">
           <Label>Placeholder</Label>
           <Input
             value={selectedField.options?.[0] || ""}
             onChange={(e) => handleChange("options", [e.target.value])}
           />
+        </div>
+      )}
+
+      {(selectedField.type === "RADIO" ||
+        selectedField.type === "CHECKBOX" ||
+        selectedField.type === "DROPDOWN") && (
+        <div className="mt-2">
+          <Label>Options</Label>
+          {selectedField.options?.map((option, index) => (
+            <div key={index} className="flex items-center space-x-2">
+              <Input
+                value={option}
+                onChange={(e) => {
+                  const newOptions = [...(selectedField.options || [])];
+                  newOptions[index] = e.target.value;
+                  handleChange("options", newOptions);
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const newOptions = (selectedField.options || []).filter(
+                    (_, i) => i !== index
+                  );
+                  handleChange("options", newOptions);
+                }}
+                className="text-red-500"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() =>
+              handleChange("options", [...(selectedField.options || []), ""])
+            }
+            className="mt-2 text-blue-500"
+          >
+            + Add Option
+          </button>
         </div>
       )}
     </div>

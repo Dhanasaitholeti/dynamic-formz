@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 interface FormField {
   id: string;
@@ -33,7 +34,7 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({
   formFields,
   onSelectField,
 }) => {
-  console.log("Form Fields:", formFields);
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -75,6 +76,8 @@ export const FormCanvas: React.FC<FormCanvasProps> = ({
       const result = await response.json();
       console.log("Form saved successfully:", result);
       toast({ title: "Success", description: "Form saved successfully!" });
+
+      router.push("/my-forms");
     } catch (error) {
       console.error("Error saving form:", error);
       toast({

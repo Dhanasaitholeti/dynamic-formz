@@ -8,8 +8,8 @@ const formElements = [
   { type: "CHECKBOX", label: "Checkbox" },
   { type: "DROPDOWN", label: "Dropdown" },
   { type: "TEXTAREA", label: "Textarea" },
-  { type: "DATE", label: "Date Picker" },
-  { type: "FILE", label: "File Upload" },
+  // { type: "DATE", label: "Date Picker" },
+  // { type: "FILE", label: "File Upload" },
 ];
 
 export const Sidebar: React.FC = () => {

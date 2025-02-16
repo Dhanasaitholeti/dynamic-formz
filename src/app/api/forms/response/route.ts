@@ -75,19 +75,20 @@ export async function POST(request: NextRequest) {
     const password = "759021a4-3ed6-4e51-83e4-acb35a31090f";
     const basicAuth = btoa(`${username}:${password}`);
 
-    const webhookCall = await fetch(
-      "https://c02-usa-west.integrate-test.boomi.com/ws/simple/executeDetailstestapi",
-      {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({ payload }),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${basicAuth}`,
-        },
-      }
-    );
-
+    if (process.env.DAMN === "mine") {
+      const webhookCall = await fetch(
+        "https://c02-usa-west.integrate-test.boomi.com/ws/simple/executeDetailstestapi",
+        {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify({ payload }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Basic ${basicAuth}`,
+          },
+        }
+      );
+    }
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
     console.error("Error submitting form:", error);

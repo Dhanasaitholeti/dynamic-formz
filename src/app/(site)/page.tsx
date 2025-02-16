@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -15,12 +16,11 @@ export default function Home() {
               collection.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <button className="rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                Get Started
-              </button>
-              <button className="text-sm font-semibold leading-6 text-gray-900 hover:text-gray-600">
-                Learn more <span aria-hidden="true">→</span>
-              </button>
+              <Link href="/create-form">
+                <button className="rounded-md bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                  Get Started
+                </button>
+              </Link>
             </div>
           </div>
         </div>

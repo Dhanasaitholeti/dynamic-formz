@@ -1,11 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
 
 export default function MyFormsPage() {
   const [forms, setForms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userId =
+    typeof window !== "undefined" ? localStorage.getItem("userId") || "" : "";
 
   useEffect(() => {
     async function fetchForms() {
@@ -15,9 +19,7 @@ export default function MyFormsPage() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            userId: "5b16111c-7356-4d84-921c-8486b00bc2b8",
-          }),
+          body: JSON.stringify({ userId }),
         });
 
         if (!response.ok) {
@@ -36,6 +38,12 @@ export default function MyFormsPage() {
     fetchForms();
   }, []);
 
+  const handleCopyLink = (formId: string) => {
+    const formUrl = `${window.location.origin}/forms/${formId}`;
+    navigator.clipboard.writeText(formUrl);
+    alert("Form link copied!");
+  };
+
   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
   if (error) return <p className="text-center text-red-500">Error: {error}</p>;
 
@@ -44,28 +52,44 @@ export default function MyFormsPage() {
       <h1 className="text-2xl font-semibold mb-6">My Forms</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {forms.map((form) => (
-          <Link href={`/my-forms/${form.id}`} passHref>
-            <div
-              key={form.id}
-              className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
-            >
-              <h2 className="text-lg font-medium">{form.title}</h2>
-              <p className="text-gray-600 mt-1">{form.description}</p>
-              <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
-                <span>
-                  Created: {new Date(form.createdAt).toLocaleDateString()}
-                </span>
-                <span>Responses: {form.responses.length}</span>
-              </div>
-              <div className="mt-2 text-sm font-medium">
-                {form.isPublished ? (
-                  <span className="text-green-600">Published</span>
-                ) : (
-                  <span className="text-gray-500">Draft</span>
-                )}
-              </div>
+          <div
+            key={form.id}
+            className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
+          >
+            <h2 className="text-lg font-medium">{form.title}</h2>
+            <p className="text-gray-600 mt-1">{form.description}</p>
+            <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
+              <span>
+                Created: {new Date(form.createdAt).toLocaleDateString()}
+              </span>
+              <span>Responses: {form.responses.length}</span>
             </div>
-          </Link>
+            <div className="mt-2 text-sm font-medium">
+              {form.isPublished ? (
+                <span className="text-green-600">Published</span>
+              ) : (
+                <span className="text-gray-500">Draft</span>
+              )}
+            </div>
+
+            {/* Link and Copy Button */}
+            <div className="mt-4 flex items-center justify-between">
+              <Link
+                href={`/form/${form.id}`}
+                className="text-blue-600 hover:underline text-sm font-medium"
+              >
+                View Form
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="p-2"
+                onClick={() => handleCopyLink(form.id)}
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
     </div>

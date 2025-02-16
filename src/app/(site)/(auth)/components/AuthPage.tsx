@@ -100,13 +100,6 @@ export default function AuthPage({ type }: { type: "login" | "register" }) {
                 : "Register"}
             </Button>
           </form>
-          {type === "login" && (
-            <div className="mt-4 text-center text-sm">
-              <Link href="#" className="text-blue-500 hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>

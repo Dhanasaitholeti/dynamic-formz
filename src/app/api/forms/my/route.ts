@@ -12,6 +12,9 @@ export async function POST(request: NextRequest) {
       where: {
         userId: body.userId,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         fields: true,
         responses: true,
