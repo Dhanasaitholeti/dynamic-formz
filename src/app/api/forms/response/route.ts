@@ -1,0 +1,68 @@
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
+
+const prisma = new PrismaClient().$extends(withAccelerate());
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    if (!body.formId || !Array.isArray(body.values)) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const form = await prisma.form.findUnique({
+      where: { id: body.formId },
+      include: {
+        fields: true,
+      },
+    });
+
+    if (!form) {
+      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    }
+
+    if (!form.isPublished) {
+      return NextResponse.json(
+        { error: "Form is not published" },
+        { status: 400 }
+      );
+    }
+
+    const requiredFields = form.fields.filter((field: any) => field.isRequired);
+    const submittedFieldIds = body.values.map((v: any) => v.fieldId);
+
+    for (const field of requiredFields) {
+      if (!submittedFieldIds.includes(field.id)) {
+        return NextResponse.json(
+          { error: `Missing required field: ${field.label}` },
+          { status: 400 }
+        );
+      }
+    }
+
+    const response = await prisma.formResponse.create({
+      data: {
+        formId: body.formId,
+        values: {
+          create: body.values.map((value: any) => ({
+            fieldId: value.fieldId,
+            value: value.value.toString(),
+          })),
+        },
+      },
+    });
+
+    return NextResponse.json(response, { status: 201 });
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
