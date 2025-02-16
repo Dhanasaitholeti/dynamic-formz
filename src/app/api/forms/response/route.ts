@@ -88,8 +88,6 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    console.log("webhookCall", webhookCall);
-
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
     console.error("Error submitting form:", error);

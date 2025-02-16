@@ -1,11 +1,16 @@
 "use client";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const authLink = pathname === "/login" ? "/register" : "/login";
+  const authText = pathname === "/login" ? "Register" : "Login";
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
@@ -20,8 +25,8 @@ export default function Navbar() {
         <Link href="/create-form" className="text-gray-700 hover:text-blue-600">
           Create Form
         </Link>
-        <Link href="/login" className="text-gray-700 hover:text-blue-600">
-          Login
+        <Link href={authLink} className="text-gray-700 hover:text-blue-600">
+          {authText}
         </Link>
       </div>
 
@@ -42,8 +47,8 @@ export default function Navbar() {
           >
             Create Form
           </Link>
-          <Link href="/login" className="text-gray-700 hover:text-blue-600">
-            Login
+          <Link href={authLink} className="text-gray-700 hover:text-blue-600">
+            {authText}
           </Link>
         </div>
       )}

@@ -77,7 +77,6 @@ const FormBuilder: React.FC = () => {
         onUpdateField={handleUpdateField}
       />
 
-      {/* Field Configuration Modal */}
       <FieldConfigModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
