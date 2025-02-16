@@ -9,7 +9,9 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      <h1 className="text-2xl font-semibold">Dynamic Form</h1>
+      <h1 className="text-2xl font-semibold">
+        <Link href="/">Dynamic Formz</Link>
+      </h1>
 
       <div className="hidden md:flex space-x-6">
         <Link href="/create-form" className="text-gray-700 hover:text-blue-600">
