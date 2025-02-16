@@ -8,22 +8,27 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    if (!body.name || !body.email || !body.password) {
+    if (!body.email || !body.password) {
       return new Response("Missing required fields", { status: 400 });
     }
 
-    const createdUser = await prisma.user.create({
-      data: {
-        name: body.name,
+    const user = await prisma.user.findUnique({
+      where: {
         email: body.email,
-        password: body.password,
       },
     });
 
-    return new Response(JSON.stringify(createdUser), { status: 201 });
-  } catch (error) {
-    console.error("Error creating user:", error);
+    if (!user) {
+      return new Response("User not found", { status: 404 });
+    }
 
+    if (user.password !== body.password) {
+      return new Response("Invalid password", { status: 401 });
+    }
+
+    return new Response(JSON.stringify(user), { status: 200 });
+  } catch (error) {
+    console.error("Error logging in user:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }
